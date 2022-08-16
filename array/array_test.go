@@ -1,7 +1,6 @@
 package array
 
 import (
-	"fmt"
 	"math/rand"
 	"sort"
 	"testing"
@@ -37,5 +36,5 @@ func BenchmarkBinarySearch704(b *testing.B) {
 func TestSortedSequence(t *testing.T) {
 	arr := []int{16, 1, 0, 9, 100}
 	QuichSort(arr, 0, len(arr))
-	fmt.Printf("arr: %v\n", arr)
+	t.Logf("%v", arr)
 }
