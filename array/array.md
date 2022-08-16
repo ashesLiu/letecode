@@ -7,4 +7,4 @@
 - [left,right]
 - [left,right)
 
-
+题目：704
