@@ -35,6 +35,6 @@ func BenchmarkBinarySearch704(b *testing.B) {
 
 func TestSortedSequence(t *testing.T) {
 	arr := []int{16, 1, 0, 9, 100}
-	QuichSort(arr, 0, len(arr))
+	QuickSort(arr, 0, len(arr))
 	t.Logf("%v", arr)
 }
