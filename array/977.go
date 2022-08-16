@@ -1,6 +1,8 @@
 package array
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 func SortedSquares(nums []int) []int {
 	n := len(nums)
@@ -32,11 +34,26 @@ func partition(nums []int, l, r int) int {
 	pos := l
 	for i := l + 1; i < r; i++ {
 		if nums[i] < v {
+			pos += 1
 			swap(nums, pos, i)
-			pos++
 		}
 	}
-	// swap(nums, pos, l)
+	swap(nums, pos, l)
+	return pos
+}
+
+func partitionv0(nums []int, l, r int) int {
+	v := nums[l]
+	// 双指针: i遍历 pos为已遍历元素的划分点
+	// 循环不变量： nums[l:pos)<pivot nums[pos:i)>=pivot
+	pos := l
+	for i := pos; i < r; i++ {
+		if nums[i] < v {
+			pos += 1
+			swap(nums, pos, i)
+		}
+	}
+	swap(nums, pos, l)
 	return pos
 }
 
