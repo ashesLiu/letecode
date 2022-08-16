@@ -18,12 +18,13 @@ func SortedSquares(nums []int) []int {
 // quichSort: [left,right)
 func QuickSort(nums []int, left, right int) {
 	if left < right {
-		idx := partition(nums, left, right)
+		idx := partition2(nums, left, right)
 		QuickSort(nums, left, idx)
 		QuickSort(nums, idx+1, right)
 	}
 }
 
+// partition: 单路
 func partition(nums []int, l, r int) int {
 
 	// 选择任意值为枢轴元素
@@ -41,6 +42,35 @@ func partition(nums []int, l, r int) int {
 	}
 	swap(nums, pos, l)
 	return pos
+}
+
+// partition2: 双路
+func partition2(nums []int, left, right int) int {
+
+	// 选择任意值为枢轴元素
+	pivot := rand.Intn(right-left) + left
+	swap(nums, pivot, left)
+	v := nums[left]
+	// 双指针 l r
+	// 循环不变量 nums[left+1,l]<=v nums[r,right)>=v
+	l, r := left+1, right-1
+	for l <= r {
+		for l <= r && nums[l] < v {
+			l++
+		}
+		for l <= r && nums[r] > v {
+			r--
+		}
+		if l < r {
+			swap(nums, l, r)
+			l++
+			r--
+		} else {
+			break
+		}
+	}
+	swap(nums, r, left)
+	return r
 }
 
 func swap(nums []int, a, b int) {
