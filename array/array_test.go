@@ -38,3 +38,9 @@ func TestSortedSequence(t *testing.T) {
 	QuickSort(arr, 0, len(arr))
 	t.Logf("%v", arr)
 }
+
+func TestMinSubArrayLen(t *testing.T) {
+	arr := []int{2, 3, 1, 2, 4, 3}
+	ans := minSubArrayLen(7, arr)
+	t.Logf("%v", ans)
+}
