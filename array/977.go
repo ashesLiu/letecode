@@ -18,7 +18,7 @@ func SortedSquares(nums []int) []int {
 // quichSort: [left,right)
 func QuickSort(nums []int, left, right int) {
 	if left < right {
-		idx := partition2(nums, left, right)
+		idx := partition3(nums, left, right)
 		QuickSort(nums, left, idx)
 		QuickSort(nums, idx+1, right)
 	}
@@ -71,6 +71,27 @@ func partition2(nums []int, left, right int) int {
 	}
 	swap(nums, r, left)
 	return r
+}
+
+func partition3(nums []int, left, right int) int {
+	pivot := rand.Intn(right-left) + left
+	swap(nums, pivot, left)
+	v := nums[pivot]
+	// [left+1,lt) < v ; [lt,eq) = v ; [gt+1,right) >v
+	lt, gt := left, right-1
+	for eq := lt; eq <= gt; {
+		if nums[eq] < v {
+			swap(nums, eq, lt)
+			lt++
+			eq++
+		} else if nums[eq] > v {
+			swap(nums, eq, gt)
+			gt--
+		} else {
+			eq++
+		}
+	}
+	return lt
 }
 
 func swap(nums []int, a, b int) {
