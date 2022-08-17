@@ -6,13 +6,18 @@ import (
 
 func SortedSquares(nums []int) []int {
 	n := len(nums)
-	for i := 0; i < n; i++ {
-		nums[i] = nums[i] * nums[i]
+	l, r := 0, n-1
+	arr := make([]int, n)
+	for idx := n - 1; l <= r; idx-- {
+		if nums[l]*nums[l] > nums[r]*nums[r] {
+			arr[idx] = nums[l] * nums[l]
+			l++
+		} else {
+			arr[idx] = nums[r] * nums[r]
+			r--
+		}
 	}
-
-	// 快排
-	QuickSort(nums, 0, len(nums))
-	return nums
+	return arr
 }
 
 // quichSort: [left,right)
@@ -75,9 +80,9 @@ func partition2(nums []int, left, right int) int {
 
 func partition3(nums []int, left, right int) int {
 	pivot := rand.Intn(right-left) + left
-	swap(nums, pivot, left)
 	v := nums[pivot]
-	// [left+1,lt) < v ; [lt,eq) = v ; [gt+1,right) >v
+	// [left,lt) < v ; [lt,eq) = v ; [gt+1,right) >v
+	// [eq,gt]区域为未扫描区域
 	lt, gt := left, right-1
 	for eq := lt; eq <= gt; {
 		if nums[eq] < v {
