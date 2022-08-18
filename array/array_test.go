@@ -49,3 +49,8 @@ func TestSearchRange(t *testing.T) {
 	arr := []int{5, 7, 7, 8, 8, 10}
 	t.Logf("%v", searchRange(arr, 8))
 }
+
+func TestToalFruit(t *testing.T) {
+	arr := []int{0, 1, 2, 1}
+	t.Logf("%v", totalFruit(arr))
+}
