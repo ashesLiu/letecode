@@ -44,3 +44,8 @@ func TestMinSubArrayLen(t *testing.T) {
 	ans := minSubArrayLen(7, arr)
 	t.Logf("%v", ans)
 }
+
+func TestSearchRange(t *testing.T) {
+	arr := []int{5, 7, 7, 8, 8, 10}
+	t.Logf("%v", searchRange(arr, 8))
+}
