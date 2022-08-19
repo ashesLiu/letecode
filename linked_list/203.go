@@ -6,17 +6,16 @@ type ListNode struct {
 }
 
 func removeElements(head *ListNode, val int) *ListNode {
-	prev := head
-	for prev != nil && prev.Val == val {
-		prev = prev.Next
-	}
-	root := prev
-	p := prev.Next
+	dummy := &ListNode{}
+	p, d := head, dummy
 	for p != nil {
 		if p.Val == val {
-			prev.Next = p.Next
+			d.Next = p.Next
+		} else {
+			d.Next = p
+			d = d.Next
 		}
 		p = p.Next
 	}
-	return root
+	return dummy.Next
 }
