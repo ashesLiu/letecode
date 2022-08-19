@@ -54,3 +54,8 @@ func TestToalFruit(t *testing.T) {
 	arr := []int{0, 1, 2, 1}
 	t.Logf("%v", totalFruit(arr))
 }
+
+func Test76(t *testing.T) {
+	s := minWindow("bdab", "ba")
+	t.Logf("%v", s)
+}
