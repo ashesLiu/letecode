@@ -5,78 +5,179 @@ type server struct{
 }
 
 
-type serverHeap []*server
+type baseHeap []*server
+type workHeap struct{
+    baseHeap
+}
+type freeHeap struct{
+    baseHeap
+}
 
-func (s serverHeap)Len()int{
-    return len(s)
+func (b baseHeap) Len()int{
+    return len(b)
 }
-func (s serverHeap)Swap(i, j int){
-    s[i], s[j] = s[j], s[i]
+
+func (b baseHeap) Swap(i,j int){
+    b[i], b[j] = b[j],b[i]
 }
-func (s serverHeap)Less(i, j int)bool{
-    if s[i].inTime == s[j].inTime {
-		if s[i].weight == s[j].weight {
-			return s[i].idx < s[j].idx
-		}
-		return s[i].weight < s[j].weight
-	}
-	return s[i].inTime < s[j].inTime
+
+func (w workHeap) Less(i, j int) bool{
+    p, q:= w.baseHeap[i], w.baseHeap[j]
+    if p.inTime == q.inTime{
+        if p.weight == q.weight{
+            return p.idx < q.idx
+        }
+        return p.weight < q.weight
+    }
+    return p.inTime < q.inTime
 }
-func (s *serverHeap)Push(val interface{}){
-    *s = append(*s, val.(server))
+
+func (f freeHeap) Less(i,j int) bool{
+    p, q:= f.baseHeap[i], f.baseHeap[j]
+    if p.weight == q.weight{
+        return p.idx < q.idx
+    }
+    return p.weight < q.weight
 }
-func (s *serverHeap)Pop() interface{}{
-    old := *s
+
+func (b *baseHeap) Push(val interface{}){
+    *b = append(*b, val.(*server))
+}
+
+func (b *baseHeap) Pop() interface{}{
+    old := *b
     n := len(old)
     ans := old[n-1]
     old[n-1] = nil
-    *s = old[0:n-1]
+    *b = old[0:n-1]
     return ans
+}
+
+func max(a, b int)int{
+    if a < b {
+        return b
+    }
+    return a
 }
 
 func assignTasks(servers []int, tasks []int) []int {
     n:= len(tasks)
-    // queue := make([]int, n)
-    startTime := make([]int, n)
+    m:= len(servers)
+    wh := workHeap{make(baseHeap,0)}
+    fh := freeHeap{make(baseHeap,m)}
     ans := make([]int, n)
-    for i:=0;i<n;i++{
-        startTime[i] = i
-        ans[i] = -1
+    for j:= range servers{
+        fh.baseHeap[j] = &server{servers[j],j,0}
     }
-    serverArray := make([]server, len(servers))
-    for i:=0;i<len(servers);i++{
-        serverArray[i] = server{weight: servers[i], idx: i}
-    }
-    sort.Slice(serverArray, func (i, j int) bool{
-		a := serverArray[i]
-		b := serverArray[j]
-        if a.weight == b.weight{
-            return a.idx < b.idx
-        }else{
-            return a.weight < b.weight
-        }
-    })
+    heap.Init(&fh)
+    heap.Init(&wh)
+    ts := 0
     for i:=0;i<n;{
-        for j:=range serverArray{
-            if serverArray[j].inTime <= startTime[i]{
-                ans[i] = serverArray[j].idx
-                serverArray[j].inTime = startTime[i] + tasks[i]
-                break
-            }
+        ts = max(ts,i)
+        for len(wh.baseHeap)>0 && wh.baseHeap[0].inTime<=ts {
+            s := heap.Pop(&wh).(*server)
+            heap.Push(&fh, s)
         }
-        if ans[i] == -1{
-            min := serverArray[0].inTime
-            for j:=range serverArray{
-                if serverArray[j].inTime < min{
-                    min = serverArray[j].inTime
-                }
-            }
-            startTime[i] = min
+        if len(fh.baseHeap)==0{
+            ts=wh.baseHeap[0].inTime
         }else{
+            s := heap.Pop(&fh).(*server)
+            ans[i] = s.idx
+            s.inTime = ts + tasks[i]
+            heap.Push(&wh, s)
             i++
         }
     }
+    return ans
+}type server struct{
+    weight int
+    idx int
+    inTime int
+}
 
 
+type baseHeap []*server
+type workHeap struct{
+    baseHeap
+}
+type freeHeap struct{
+    baseHeap
+}
+
+func (b baseHeap) Len()int{
+    return len(b)
+}
+
+func (b baseHeap) Swap(i,j int){
+    b[i], b[j] = b[j],b[i]
+}
+
+func (w workHeap) Less(i, j int) bool{
+    p, q:= w.baseHeap[i], w.baseHeap[j]
+    if p.inTime == q.inTime{
+        if p.weight == q.weight{
+            return p.idx < q.idx
+        }
+        return p.weight < q.weight
+    }
+    return p.inTime < q.inTime
+}
+
+func (f freeHeap) Less(i,j int) bool{
+    p, q:= f.baseHeap[i], f.baseHeap[j]
+    if p.weight == q.weight{
+        return p.idx < q.idx
+    }
+    return p.weight < q.weight
+}
+
+func (b *baseHeap) Push(val interface{}){
+    *b = append(*b, val.(*server))
+}
+
+func (b *baseHeap) Pop() interface{}{
+    old := *b
+    n := len(old)
+    ans := old[n-1]
+    old[n-1] = nil
+    *b = old[0:n-1]
+    return ans
+}
+
+func max(a, b int)int{
+    if a < b {
+        return b
+    }
+    return a
+}
+
+func assignTasks(servers []int, tasks []int) []int {
+    n:= len(tasks)
+    m:= len(servers)
+    wh := workHeap{make(baseHeap,0)}
+    fh := freeHeap{make(baseHeap,m)}
+    ans := make([]int, n)
+    for j:= range servers{
+        fh.baseHeap[j] = &server{servers[j],j,0}
+    }
+    heap.Init(&fh)
+    heap.Init(&wh)
+    ts := 0
+    for i:=0;i<n;{
+        ts = max(ts,i)
+        for len(wh.baseHeap)>0 && wh.baseHeap[0].inTime<=ts {
+            s := heap.Pop(&wh).(*server)
+            heap.Push(&fh, s)
+        }
+        if len(fh.baseHeap)==0{
+            ts=wh.baseHeap[0].inTime
+        }else{
+            s := heap.Pop(&fh).(*server)
+            ans[i] = s.idx
+            s.inTime = ts + tasks[i]
+            heap.Push(&wh, s)
+            i++
+        }
+    }
     return ans
 }
