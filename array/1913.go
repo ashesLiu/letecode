@@ -1,24 +1,23 @@
 package array
 
 func maxProductDifference(nums []int) int {
-	l1,l2,r1,r2 := 0,0,0,0
-	for i:=range nums{
-	  if nums[i]<nums[l1]{
-		l1 = i
+	var mx1,mx2,mn1,mn2 int = 0,0,1e5,1e5
+	for _,v:=range nums{
+	  if v>mx1{
+		mx2 = mx1
+		mx1 = v
+	  }else if v>mx2{
+		mx2 = v
 	  }
-	  if nums[i]>nums[r1]{
-		r1 = i
+  
+	  if v< mn1{
+		mn2 = mn1
+		mn1 = v
+	  }else if v<mn2{
+		mn2 = v
 	  }
+	  // fmt.Printf("%v %v %v %v\n",mx1,mx2,mn1,mn2)
 	}
-	l2 = r1
-	r2 = l1
-	for i:=range nums{
-	  if nums[i]<nums[l2] && i!= l1{
-		l2 = i
-	  }
-	  if nums[i]>nums[r2] && i!= r1{
-		r2 = i
-	  }
-	}
-	return nums[r1]*nums[r2] - nums[l1]*nums[l2]
-  }
+	// fmt.Printf("%v %v %v %v\n",mx1,mx2,mn1,mn2)
+	return mx1*mx2 - mn1*mn2
+}
