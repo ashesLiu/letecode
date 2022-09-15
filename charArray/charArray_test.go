@@ -26,3 +26,7 @@ func TestType(t *testing.T){
 	}
 	fmt.Printf("%q\n", runes) // "['H' 'e' 'l' 'l' 'o' ',' ' ' '世' '界']"
 }
+
+func Test_28(t *testing.T){
+	strStr("aabaabaafl","aabaaf")
+}

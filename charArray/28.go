@@ -1,19 +1,24 @@
 package charArray
 
+import(
+	"fmt"
+)
+
 func strStr(haystack string, needle string) int {
-	i, j:=0, 0
-	for i<len(haystack){
-		pos := i
-		for j = 0; j<len(needle);j++{
-			if pos==len(haystack)||needle[j]!=haystack[pos]{
+	next := make([]int, len(needle))
+	i:=0
+	for j:=1;j<len(needle);j++{
+		pi, pj := i, j
+		for pi<pj{
+			if needle[pi] == needle[pj]{
+				pi++
+				pj--
+				next[j]++
+			}else{
 				break
 			}
-			pos++
 		}
-		if j == len(needle){
-			return i
-		}
-		i++
 	}
+	fmt.Println(next)
 	return -1
 }
