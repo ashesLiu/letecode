@@ -28,5 +28,5 @@ func TestType(t *testing.T){
 }
 
 func Test_28(t *testing.T){
-	strStr("aabaabaafl","aabaaf")
+	strStr("aabaabaafl","aaabaf")
 }
