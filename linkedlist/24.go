@@ -6,24 +6,25 @@ func swapPairs(head *ListNode) *ListNode {
 	if head == nil || head.Next == nil{
 		return head
 	}
-	l, r := head, head.Next
-	root, prev := head.Next, l
-	for l!=nil{
-		if l.Next != nil{
-			r = l.Next
-			// store next
-			next := r.Next
-			// switch l and r
-			prev.Next = r
-			r.Next = l
-			l.Next = nil
-			prev = l
-			// move to next
-			l = next
-		}else{
-			prev.Next = l
-			l = l.Next
+	root := head.Next
+	pi, pj := head, head.Next
+	var prev *ListNode 
+	for pi != nil && pj!=nil {
+		pj = pi.Next
+		if pj != nil{
+			pi,prev = swap(prev, pi, pj)
 		}
 	}
 	return root
+}
+
+func swap(prev, pa, pb *ListNode) (*ListNode, *ListNode) {
+	next := pb.Next
+	if prev != nil {
+		prev.Next = pb
+	}
+	pb.Next = pa
+	pa.Next = next
+	prev = pa
+	return next, prev
 }
