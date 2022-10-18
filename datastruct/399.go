@@ -1,50 +1,74 @@
 package datastruct
 
-import (
-	"fmt"
-	"strings"
-)
+type UnionFind struct{
+	father []int
+	weight []float64
+}
+
+func NewUnionFind(size int) *UnionFind{
+	father := make([]int, size)
+	weight := make([]float64, size)
+	for i:=range father{
+		father[i]=i
+		weight[i]=1
+	}
+    return &UnionFind{father, weight}
+}
+
+func (u *UnionFind) find(num int) int{
+	if num == u.father[num]{
+        return num
+    }
+    x := u.find(u.father[num])
+    u.weight[num] *= u.weight[u.father[num]]
+    u.father[num] = x
+    return x
+}
+
+func (u *UnionFind) union(x int, y int, v float64){
+	// x = fx*w[x]
+	// y = fy*w[y]
+	// x/y = v
+	// fx*w[x] / (fy*w[y]) = v
+	// fx/fy = v/w[x]*w[y]
+	fx, fy := u.find(x), u.find(y)
+	if fx != fy{
+		u.father[fx] = fy
+		u.weight[fx] = v/u.weight[x]*u.weight[y]
+	}
+}
+
+
 
 func calcEquation(equations [][]string, values []float64, queries [][]string) []float64 {
-	data := make(map[string]float64)
-	for i := 0; i < len(equations); i++ {
-		eq1, eq2 := code(equations[i][0], equations[i][1]), code(equations[i][1], equations[i][0])
-		data[eq1] = values[i]
-		data[eq2] = 1.0 / values[i]
+	idmap := make(map[string]int)
+	for i:= range equations{
+		getId(idmap, equations[i][0])
+		getId(idmap, equations[i][1])
 	}
-
-	var dfs func(known map[string]float64, left string, target string, value float64, visited map[string]bool) float64
-
-	dfs = func(known map[string]float64, left string, target string, value float64, visited map[string]bool) float64 {
-		if ans, ok := known[code(left, target)]; ok {
-			return value * ans
+	group := NewUnionFind(len(idmap))
+	for i, eq:=range equations{
+		group.union(idmap[eq[0]], idmap[eq[1]], values[i])
+	}
+    fmt.Println(group.father)
+    fmt.Println(group.weight)
+	ans := make([]float64, len(queries))
+	for i, qu:=range queries{
+        idA, ok := idmap[qu[0]]
+        idB, ok2 := idmap[qu[1]]
+		if ok&&ok2&&group.find(idA) == group.find(idB){
+			ans[i] = group.weight[idA] / group.weight[idB]
+		}else{
+			ans[i] = -1
 		}
-		res := -1.0
-		for k, v := range known {
-			eqs := decode(k)
-			if eqs[0] == left && !visited[eqs[0]] {
-				visited[eqs[0]] = true
-				res = dfs(known, target, eqs[1], value*v, visited)
-				if res != -1.0 {
-					return res
-				}
-				visited[eqs[0]] = false
-			}
-		}
-		return res
 	}
-	arr := make([]float64, len(queries))
-	for i := range queries {
-		visited := make(map[string]bool)
-		arr[i] = dfs(data, queries[i][0], queries[i][1], 1, visited)
-	}
-	return arr
+	return ans
 }
 
-func code(a, b string) string {
-	return fmt.Sprintf("%s/%s", a, b)
-}
 
-func decode(s string) []string {
-	return strings.Split(s, "/")
+
+func getId(idmap map[string]int, key string){
+	if _, ok:= idmap[key]; !ok{
+		idmap[key] = len(idmap)
+	}
 }
