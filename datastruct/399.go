@@ -50,8 +50,6 @@ func calcEquation(equations [][]string, values []float64, queries [][]string) []
 	for i, eq:=range equations{
 		group.union(idmap[eq[0]], idmap[eq[1]], values[i])
 	}
-    fmt.Println(group.father)
-    fmt.Println(group.weight)
 	ans := make([]float64, len(queries))
 	for i, qu:=range queries{
         idA, ok := idmap[qu[0]]
